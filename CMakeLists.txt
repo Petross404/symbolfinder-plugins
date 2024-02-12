@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.0)
 
 project(symbolfinder-plugins VERSION 0.0.1)
 
+if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
+        find_package(SymbolFinder)
+else()
+        include_directories(${CMAKE_SOURCE_DIR}/src/)
+endif()
+
 #Set the language standard.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
