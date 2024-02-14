@@ -5,7 +5,7 @@ project(symbolfinder-plugins VERSION 0.0.1)
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
         find_package(SymbolFinder)
 else()
-        include_directories(${CMAKE_SOURCE_DIR}/src/)
+        include_directories(${CMAKE_SOURCE_DIR}/include/)
 endif()
 
 #Set the language standard.
