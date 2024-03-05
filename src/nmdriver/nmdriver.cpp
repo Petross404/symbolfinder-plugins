@@ -29,7 +29,6 @@
 #include <SymbolFinder/Scanner/interface/genericdriver.hpp>    // for Driver
 #include <SymbolFinder/Scanner/interface/idriver.hpp>	       // for StopIndex
 #include <SymbolFinder/Scanner/interface/pluginmanager.hpp>
-
 #include <functional>
 
 class QObject;	  // lines 12-12
