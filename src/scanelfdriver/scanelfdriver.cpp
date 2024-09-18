@@ -26,10 +26,8 @@
 #include <qnamespace.h>	   // for UniqueConnection
 #include <qpluginloader.h>
 
-#include <SymbolFinder/ConnectVerifier/connectverifier.hpp>    // for ConnectVerifier
+#include <SymbolFinder/Helper/connect.hpp>
 #include <SymbolFinder/Helper/string.hpp>
-#include <SymbolFinder/Scanner/interface/genericdriver.hpp>    // for Driver
-#include <SymbolFinder/Scanner/interface/idriver.hpp>	       // for StopIndex
 #include <SymbolFinder/Scanner/interface/pluginmanager.hpp>
 #include <cstdint>    // for uint16_t
 #include <cstring>
@@ -46,13 +44,12 @@ ScanelfDriver::ScanelfDriver( std::optional<QObject *> parent )
 {
 	updateStopIndexSlot();
 
-	ConnectVerifier v;
-
-	v = connect( this,
-		     &GenericDriver::stopIndexUpdated,
-		     this,
-		     &ScanelfDriver::updateStopIndexSlot,
-		     Qt::UniqueConnection );
+	Utils::connect( this,
+			&GenericDriver::symbolNameDelimiterUpdated,
+			this,
+			&ScanelfDriver::updateStopIndexSlot,
+			Utils::ConnectionContext{ Qt::DirectConnection,
+						  std::source_location::current() } );
 }
 
 ScanelfDriver::~ScanelfDriver() = default;
@@ -79,12 +76,14 @@ void ScanelfDriver::updateStopIndexSlot()
 
 		if ( stopChar == '+' || ( stopChar == '-' && ( args.find( sub, i ) ) ) )
 		{
-			setStopIndexSlot( StopIndex::makeStopIndex( i, &stopChar ) );
+			const SymbolNameDelimiter si{
+				SymbolNameDelimiter::create( i, { stopChar } ) };
+			setSymbolDelimeter( std::cref( si ) );
 		}
 	}
 }
 
-IDriver *init( QObject *parent ) { return new ScanelfDriver{ parent }; }
+ISymbolSearchDriver *init( QObject *parent ) { return new ScanelfDriver{ parent }; }
 
 const char *driverNameGlobal()
 {

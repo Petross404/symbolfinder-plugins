@@ -25,31 +25,28 @@
 #include <stdint.h>	   // for uint16_t
 
 #include <QJsonObject>
-#include <SymbolFinder/ConnectVerifier/connectverifier.hpp>    // for ConnectVerifier
-#include <SymbolFinder/Scanner/interface/genericdriver.hpp>    // for Driver
-#include <SymbolFinder/Scanner/interface/idriver.hpp>	       // for StopIndex
+#include <SymbolFinder/Helper/connect.hpp>
 #include <SymbolFinder/Scanner/interface/pluginmanager.hpp>
 #include <functional>
 
 class QObject;	  // lines 12-12
 
 constexpr char	      g_spaceChar{ ' ' };
-constexpr char const *g_programName{ "nm" };
-constexpr char const *g_defArgs{ "-Dn -o --defined-only /lib/* /usr/lib64/* 2> "
+constexpr char const* g_programName{ "nm" };
+constexpr char const* g_defArgs{ "-Dn -o --defined-only /lib/* /usr/lib64/* 2> "
 				 "/dev/null | grep '\b\b'" };
 
-NmDriver::NmDriver( std::optional<QObject *> parent )
+NmDriver::NmDriver( std::optional<QObject*> parent )
 	: GenericDriver{ g_programName, g_defArgs, parent.value_or( nullptr ) }
 {
 	updateStopIndexSlot();
 
-	ConnectVerifier v;
-
-	v = connect( this,
-		     &GenericDriver::stopIndexUpdated,
-		     this,
-		     &NmDriver::updateStopIndexSlot,
-		     Qt::UniqueConnection );
+	Utils::connect( this,
+			&GenericDriver::symbolNameDelimiterUpdated,
+			this,
+			&NmDriver::updateStopIndexSlot,
+			Utils::ConnectionContext{ Qt::DirectConnection,
+						  std::source_location::current() } );
 }
 
 NmDriver::~NmDriver() = default;
@@ -64,25 +61,25 @@ void NmDriver::updateStopIndexSlot()
 
 	if ( int index = std::distance( strArgs.begin(), it ); index )
 	{
-		const StopIndex si{ StopIndex::makeStopIndex( (uint32_t)index, s ) };
-		setStopIndexSlot( std::cref( si ) );
+		const SymbolNameDelimiter si{
+			SymbolNameDelimiter::create( (uint32_t)index, s ) };
+		setSymbolDelimeter( std::cref( si ) );
 	}
-	else { emit stopIndexUpdatingFailed(); }
 }
 
-IDriver *init( QObject *parent ) { return new NmDriver{ parent }; }
+ISymbolSearchDriver* init( QObject* parent ) { return new NmDriver{ parent }; }
 
-const char *driverNameGlobal()
+const char* driverNameGlobal()
 {
 	const size_t size = strlen( g_programName );
 
-	char *p = new char[size + 1];
+	char* p = new char[size + 1];
 	strcpy( p, g_programName );
 
 	return p;
 }
 
-const char *driverDescGlobal()
+const char* driverDescGlobal()
 {
 	std::unique_ptr<QProcess> pr{ std::make_unique<QProcess>() };
 
@@ -95,17 +92,17 @@ const char *driverDescGlobal()
 
 	const size_t size = strlen( qPrintable( result ) );
 
-	char *pc = new char[size + 1];
+	char* pc = new char[size + 1];
 	strcpy( pc, result );
 
 	return pc;
 }
 
-const char *argumentsGlobal()
+const char* argumentsGlobal()
 {
 	const size_t size = strlen( g_defArgs );
 
-	char *p = new char[size + 1];
+	char* p = new char[size + 1];
 	strcpy( p, g_defArgs );
 
 	return p;

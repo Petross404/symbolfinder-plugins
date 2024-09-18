@@ -40,8 +40,8 @@
 
 /*!
  * \brief `ScanelfDriver` acts as a driver for `scanelf`.
- * `ScanelfDriver`  inherits from `IDriver` and defines some scanelf-specific
- * functions.
+ * `ScanelfDriver`  inherits from `ISymbolSearchDriver` and defines some
+ * scanelf-specific functions.
  */
 class SCANELFLIB_EXPORT ScanelfDriver: public GenericDriver
 {
@@ -62,9 +62,9 @@ private slots:
 	void updateStopIndexSlot();
 };
 
-extern "C" SCANELFLIB_EXPORT IDriver	*init( QObject *parent );
-extern "C" SCANELFLIB_EXPORT const char *driverNameGlobal();
-extern "C" SCANELFLIB_EXPORT const char *driverDescGlobal();
-extern "C" SCANELFLIB_EXPORT const char *argumentsGlobal();
+extern "C" SCANELFLIB_EXPORT ISymbolSearchDriver *init( QObject *parent );
+extern "C" SCANELFLIB_EXPORT const char		 *driverNameGlobal();
+extern "C" SCANELFLIB_EXPORT const char		 *driverDescGlobal();
+extern "C" SCANELFLIB_EXPORT const char		 *argumentsGlobal();
 
 #endif	  // SCANELFDRIVER_HPP

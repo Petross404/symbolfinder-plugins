@@ -25,7 +25,7 @@
 #include <qstring.h>	    // for QString
 #include <qstringlist.h>    // for QStringList
 
-#include <SymbolFinder/Scanner/interface/genericdriver.hpp>    // for IDriver
+#include <SymbolFinder/Scanner/interface/genericdriver.hpp>    // for ISymbolSearchDriver
 
 #if defined( NMDRIVER_HPP )
 #	ifdef Q_OS_WIN
@@ -38,7 +38,7 @@
 #endif
 
 /*!
- * \brief `NmDriver` inherits from `IDriver` and acts as a driver for nm
+ * \brief `NmDriver` inherits from `ISymbolSearchDriver` and acts as a driver for nm
  *
  * `NmDriver` defines some nm-specific functions.
  */
@@ -61,9 +61,9 @@ private slots:
 	void updateStopIndexSlot();
 };
 
-extern "C" NMLIB_EXPORT IDriver	   *init( QObject *parent );
-extern "C" NMLIB_EXPORT const char *driverNameGlobal();
-extern "C" NMLIB_EXPORT const char *driverDescGlobal();
-extern "C" NMLIB_EXPORT const char *argumentsGlobal();
+extern "C" NMLIB_EXPORT ISymbolSearchDriver *init( QObject *parent );
+extern "C" NMLIB_EXPORT const char	    *driverNameGlobal();
+extern "C" NMLIB_EXPORT const char	    *driverDescGlobal();
+extern "C" NMLIB_EXPORT const char	    *argumentsGlobal();
 
 #endif	  // NMDRIVER_HPP
